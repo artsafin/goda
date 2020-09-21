@@ -13,9 +13,1869 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/deepmap/oapi-codegen/pkg/runtime"
+	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 )
+
+// AccessType defines model for AccessType.
+type AccessType string
+
+// List of AccessType
+const (
+	AccessType_comment  AccessType = "comment"
+	AccessType_none     AccessType = "none"
+	AccessType_readonly AccessType = "readonly"
+	AccessType_write    AccessType = "write"
+)
+
+// Acl defines model for Acl.
+type Acl struct {
+
+	// API link to these results
+	Href         string       `json:"href"`
+	Items        []Permission `json:"items"`
+	NextPageLink *struct {
+		// Embedded struct due to allOf(#/components/schemas/nextPageLink)
+		NextPageLink
+		// Embedded fields due to inline allOf schema
+	} `json:"nextPageLink,omitempty"`
+
+	// If specified, an opaque token used to fetch the next page of results.
+	NextPageToken *NextPageToken `json:"nextPageToken,omitempty"`
+}
+
+// AclMetadata defines model for AclMetadata.
+type AclMetadata struct {
+
+	// When true, the user of the api can share
+	CanShare bool `json:"canShare"`
+
+	// When true, the user of the api can share with the org
+	CanShareWithOrg bool `json:"canShareWithOrg"`
+}
+
+// AddPermission defines model for AddPermission.
+type AddPermission struct {
+
+	// Type of access.
+	Access AccessType `json:"access"`
+
+	// Metadata about a principal.
+	Principal Principal `json:"principal"`
+
+	// When true suppresses email notification
+	SuppressEmail *bool `json:"suppressEmail,omitempty"`
+}
+
+// AddPermissionResult defines model for AddPermissionResult.
+type AddPermissionResult map[string]interface{}
+
+// AnyonePrincipal defines model for AnyonePrincipal.
+type AnyonePrincipal struct {
+
+	// Type of principal.
+	Type PrincipalType `json:"type"`
+}
+
+// ApiLink defines model for ApiLink.
+type ApiLink struct {
+
+	// Canonical browser-friendly link to the resolved resource.
+	BrowserLink *string `json:"browserLink,omitempty"`
+
+	// Self link to this query.
+	Href string `json:"href"`
+
+	// Reference to the resolved resource.
+	Resource ApiLinkResolvedResource `json:"resource"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// ApiLinkResolvedResource defines model for ApiLinkResolvedResource.
+type ApiLinkResolvedResource struct {
+
+	// API link to the resolved resource that can be queried to get further information.
+	Href string `json:"href"`
+
+	// ID of the resolved resource.
+	Id string `json:"id"`
+
+	// Name of the resource.
+	Name *string `json:"name,omitempty"`
+
+	// A constant identifying the type of the resource.
+	Type Type `json:"type"`
+}
+
+// CellEdit defines model for CellEdit.
+type CellEdit struct {
+
+	// Column ID, URL, or name (fragile and discouraged) associated with this edit.
+	Column string `json:"column"`
+
+	// A Coda result or entity expressed as a primitive type, or array of primitive types.
+	Value Value `json:"value"`
+}
+
+// CellValue defines model for CellValue.
+type CellValue interface{}
+
+// Column defines model for Column.
+type Column struct {
+
+	// Whether the column has a formula set on it.
+	Calculated *bool `json:"calculated,omitempty"`
+
+	// Whether the column is the display column.
+	Display *bool `json:"display,omitempty"`
+
+	// Format of a column.
+	Format ColumnFormat `json:"format"`
+
+	// API link to the column.
+	Href string `json:"href"`
+
+	// ID of the column.
+	Id string `json:"id"`
+
+	// Name of the column.
+	Name string `json:"name"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// ColumnDetail defines model for ColumnDetail.
+type ColumnDetail struct {
+
+	// Whether the column has a formula set on it.
+	Calculated *bool `json:"calculated,omitempty"`
+
+	// Whether the column is the display column.
+	Display *bool `json:"display,omitempty"`
+
+	// Format of a column.
+	Format ColumnFormat `json:"format"`
+
+	// API link to the column.
+	Href string `json:"href"`
+
+	// ID of the column.
+	Id string `json:"id"`
+
+	// Name of the column.
+	Name string `json:"name"`
+
+	// Reference to a table or view.
+	Parent TableReference `json:"parent"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// ColumnFormat defines model for ColumnFormat.
+type ColumnFormat interface{}
+
+// ColumnFormatType defines model for ColumnFormatType.
+type ColumnFormatType string
+
+// List of ColumnFormatType
+const (
+	ColumnFormatType__select    ColumnFormatType = "select"
+	ColumnFormatType_button     ColumnFormatType = "button"
+	ColumnFormatType_checkbox   ColumnFormatType = "checkbox"
+	ColumnFormatType_currency   ColumnFormatType = "currency"
+	ColumnFormatType_date       ColumnFormatType = "date"
+	ColumnFormatType_dateTime   ColumnFormatType = "dateTime"
+	ColumnFormatType_duration   ColumnFormatType = "duration"
+	ColumnFormatType_image      ColumnFormatType = "image"
+	ColumnFormatType_lookup     ColumnFormatType = "lookup"
+	ColumnFormatType_number     ColumnFormatType = "number"
+	ColumnFormatType_other      ColumnFormatType = "other"
+	ColumnFormatType_packObject ColumnFormatType = "packObject"
+	ColumnFormatType_percent    ColumnFormatType = "percent"
+	ColumnFormatType_person     ColumnFormatType = "person"
+	ColumnFormatType_scale      ColumnFormatType = "scale"
+	ColumnFormatType_slider     ColumnFormatType = "slider"
+	ColumnFormatType_text       ColumnFormatType = "text"
+	ColumnFormatType_time       ColumnFormatType = "time"
+)
+
+// ColumnList defines model for ColumnList.
+type ColumnList struct {
+
+	// API link to these results
+	Href         *string  `json:"href,omitempty"`
+	Items        []Column `json:"items"`
+	NextPageLink *struct {
+		// Embedded struct due to allOf(#/components/schemas/nextPageLink)
+		NextPageLink
+		// Embedded fields due to inline allOf schema
+	} `json:"nextPageLink,omitempty"`
+
+	// If specified, an opaque token used to fetch the next page of results.
+	NextPageToken *NextPageToken `json:"nextPageToken,omitempty"`
+}
+
+// ColumnReference defines model for ColumnReference.
+type ColumnReference struct {
+
+	// API link to the column.
+	Href string `json:"href"`
+
+	// ID of the column.
+	Id string `json:"id"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// Control defines model for Control.
+type Control struct {
+
+	// Type of the control.
+	ControlType ControlType `json:"controlType"`
+
+	// API link to the control.
+	Href string `json:"href"`
+
+	// ID of the control.
+	Id string `json:"id"`
+
+	// Name of the control.
+	Name string `json:"name"`
+
+	// Reference to a page.
+	Parent *PageReference `json:"parent,omitempty"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+
+	// A Coda result or entity expressed as a primitive type, or array of primitive types.
+	Value Value `json:"value"`
+}
+
+// ControlList defines model for ControlList.
+type ControlList struct {
+
+	// API link to these results
+	Href         *string            `json:"href,omitempty"`
+	Items        []ControlReference `json:"items"`
+	NextPageLink *struct {
+		// Embedded struct due to allOf(#/components/schemas/nextPageLink)
+		NextPageLink
+		// Embedded fields due to inline allOf schema
+	} `json:"nextPageLink,omitempty"`
+
+	// If specified, an opaque token used to fetch the next page of results.
+	NextPageToken *NextPageToken `json:"nextPageToken,omitempty"`
+}
+
+// ControlReference defines model for ControlReference.
+type ControlReference struct {
+
+	// API link to the control.
+	Href string `json:"href"`
+
+	// ID of the control.
+	Id string `json:"id"`
+
+	// Name of the control.
+	Name string `json:"name"`
+
+	// Reference to a page.
+	Parent *PageReference `json:"parent,omitempty"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// ControlType defines model for ControlType.
+type ControlType string
+
+// List of ControlType
+const (
+	ControlType__select         ControlType = "select"
+	ControlType_button          ControlType = "button"
+	ControlType_checkbox        ControlType = "checkbox"
+	ControlType_datePicker      ControlType = "datePicker"
+	ControlType_dateRangePicker ControlType = "dateRangePicker"
+	ControlType_multiselect     ControlType = "multiselect"
+	ControlType_scale           ControlType = "scale"
+	ControlType_slider          ControlType = "slider"
+)
+
+// CurrencyAmount defines model for CurrencyAmount.
+type CurrencyAmount interface{}
+
+// CurrencyColumnFormat defines model for CurrencyColumnFormat.
+type CurrencyColumnFormat struct {
+	// Embedded struct due to allOf(#/components/schemas/SimpleColumnFormat)
+	SimpleColumnFormat
+	// Embedded fields due to inline allOf schema
+
+	// The currency symbol
+	CurrencyCode *string `json:"currencyCode,omitempty"`
+
+	// How the numeric value should be formatted (with or without symbol, negative numbers in parens).
+	Format *CurrencyFormatType `json:"format,omitempty"`
+
+	// The decimal precision.
+	Precision *int `json:"precision,omitempty"`
+}
+
+// CurrencyFormatType defines model for CurrencyFormatType.
+type CurrencyFormatType string
+
+// List of CurrencyFormatType
+const (
+	CurrencyFormatType_accounting CurrencyFormatType = "accounting"
+	CurrencyFormatType_currency   CurrencyFormatType = "currency"
+	CurrencyFormatType_financial  CurrencyFormatType = "financial"
+)
+
+// CurrencyValue defines model for CurrencyValue.
+type CurrencyValue struct {
+	// Embedded struct due to allOf(#/components/schemas/LinkedDataObject)
+	LinkedDataObject
+	// Embedded fields due to inline allOf schema
+
+	// A numeric monetary amount as a string or number.
+	Amount CurrencyAmount `json:"amount"`
+
+	// The 3-letter currency code.
+	Currency string `json:"currency"`
+}
+
+// DateColumnFormat defines model for DateColumnFormat.
+type DateColumnFormat struct {
+	// Embedded struct due to allOf(#/components/schemas/SimpleColumnFormat)
+	SimpleColumnFormat
+	// Embedded fields due to inline allOf schema
+
+	// A format string using Moment syntax: https://momentjs.com/docs/#/displaying/
+	Format *string `json:"format,omitempty"`
+}
+
+// DateTimeColumnFormat defines model for DateTimeColumnFormat.
+type DateTimeColumnFormat struct {
+	// Embedded struct due to allOf(#/components/schemas/SimpleColumnFormat)
+	SimpleColumnFormat
+	// Embedded fields due to inline allOf schema
+
+	// A format string using Moment syntax: https://momentjs.com/docs/#/displaying/
+	DateFormat *string `json:"dateFormat,omitempty"`
+
+	// A format string using Moment syntax: https://momentjs.com/docs/#/displaying/
+	TimeFormat *string `json:"timeFormat,omitempty"`
+}
+
+// DeletePermissionResult defines model for DeletePermissionResult.
+type DeletePermissionResult map[string]interface{}
+
+// Doc defines model for Doc.
+type Doc struct {
+
+	// Browser-friendly link to the Coda doc.
+	BrowserLink string `json:"browserLink"`
+
+	// Timestamp for when the doc was created.
+	CreatedAt time.Time `json:"createdAt"`
+
+	// The number of components within a Coda doc.
+	DocSize *DocSize `json:"docSize,omitempty"`
+
+	// API link to the Coda doc.
+	Href string `json:"href"`
+
+	// Info about the icon.
+	Icon *Icon `json:"icon,omitempty"`
+
+	// ID of the Coda doc.
+	Id string `json:"id"`
+
+	// Name of the doc.
+	Name string `json:"name"`
+
+	// Email address of the doc owner.
+	Owner openapi_types.Email `json:"owner"`
+
+	// Name of the doc owner.
+	OwnerName string `json:"ownerName"`
+
+	// Information about the publishing state of the document.
+	Published *DocPublished `json:"published,omitempty"`
+	SourceDoc *struct {
+		// Embedded fields due to inline allOf schema
+		// Embedded struct due to allOf(#/components/schemas/DocReference)
+		DocReference
+	} `json:"sourceDoc,omitempty"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+
+	// Timestamp for when the doc was last modified.
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+// DocAnalyticsDaily defines model for DocAnalyticsDaily.
+type DocAnalyticsDaily struct {
+	Items        []DocAnalyticsDay `json:"items"`
+	NextPageLink *struct {
+		// Embedded struct due to allOf(#/components/schemas/nextPageLink)
+		NextPageLink
+		// Embedded fields due to inline allOf schema
+	} `json:"nextPageLink,omitempty"`
+
+	// If specified, an opaque token used to fetch the next page of results.
+	NextPageToken *NextPageToken `json:"nextPageToken,omitempty"`
+}
+
+// DocAnalyticsDay defines model for DocAnalyticsDay.
+type DocAnalyticsDay struct {
+
+	// Number of times the doc was copied on the given date.
+	Copies int `json:"copies"`
+
+	// Date of the analytics data.
+	Date openapi_types.Date `json:"date"`
+	Doc  struct {
+		// Embedded struct due to allOf(#/components/schemas/DocReference)
+		DocReference
+		// Embedded fields due to inline allOf schema
+
+		// Title of the doc.
+		Title string `json:"title"`
+	} `json:"doc"`
+
+	// Number of times the doc was liked on the given date.
+	Likes int `json:"likes"`
+
+	// Number of times the doc was viewed on the given date.
+	Views int `json:"views"`
+}
+
+// DocCategory defines model for DocCategory.
+type DocCategory struct {
+
+	// Name of the category.
+	Name string `json:"name"`
+}
+
+// DocCategoryList defines model for DocCategoryList.
+type DocCategoryList struct {
+
+	// Categories for the doc.
+	Items []DocCategory `json:"items"`
+}
+
+// DocCreate defines model for DocCreate.
+type DocCreate struct {
+
+	// The ID of the folder within which to create this doc. Defaults to your "My Docs" folder in the oldest workspace you joined; this is subject to change. You can get this ID by opening the folder in the docs list on your computer and grabbing the `folderId` query parameter.
+	FolderId *string `json:"folderId,omitempty"`
+
+	// An optional doc ID from which to create a copy.
+	SourceDoc *string `json:"sourceDoc,omitempty"`
+
+	// The timezone to use for the newly created doc.
+	Timezone *string `json:"timezone,omitempty"`
+
+	// Title of the new doc. Defaults to 'Untitled'.
+	Title *string `json:"title,omitempty"`
+}
+
+// DocDelete defines model for DocDelete.
+type DocDelete map[string]interface{}
+
+// DocList defines model for DocList.
+type DocList struct {
+
+	// API link to these results
+	Href         *string `json:"href,omitempty"`
+	Items        []Doc   `json:"items"`
+	NextPageLink *struct {
+		// Embedded struct due to allOf(#/components/schemas/nextPageLink)
+		NextPageLink
+		// Embedded fields due to inline allOf schema
+	} `json:"nextPageLink,omitempty"`
+
+	// If specified, an opaque token used to fetch the next page of results.
+	NextPageToken *NextPageToken `json:"nextPageToken,omitempty"`
+}
+
+// DocPublish defines model for DocPublish.
+type DocPublish struct {
+
+	// The names of categories to apply to the document.
+	CategoryNames *[]string `json:"categoryNames,omitempty"`
+
+	// If true, the doc will display a copy button in the header.
+	Copyable *bool `json:"copyable,omitempty"`
+
+	// If true, indicates that the doc is discoverable.
+	Discoverable *bool `json:"discoverable,omitempty"`
+
+	// If true, new users may be required to sign in to view content within this document. You will receive Coda credit for each user who signs up via your doc.
+	EarnCredit *bool `json:"earnCredit,omitempty"`
+
+	// A time unit used as part of a duration value.
+	Mode *DocPublishMode `json:"mode,omitempty"`
+
+	// Slug for the published doc.
+	Slug *string `json:"slug,omitempty"`
+}
+
+// DocPublishMode defines model for DocPublishMode.
+type DocPublishMode string
+
+// List of DocPublishMode
+const (
+	DocPublishMode_edit DocPublishMode = "edit"
+	DocPublishMode_play DocPublishMode = "play"
+	DocPublishMode_view DocPublishMode = "view"
+)
+
+// DocPublished defines model for DocPublished.
+type DocPublished struct {
+
+	// URL to the published doc.
+	BrowserLink string `json:"browserLink"`
+
+	// Categories applied to the doc.
+	Categories []DocCategory `json:"categories"`
+
+	// If true, the doc will display a copy button in the header.
+	Copyable bool `json:"copyable"`
+
+	// Description of the published doc.
+	Description *string `json:"description,omitempty"`
+
+	// If true, indicates that the doc is discoverable.
+	Discoverable bool `json:"discoverable"`
+
+	// If true, new users may be required to sign in to view content within this document. You will receive Coda credit for each user who signs up via your doc.
+	EarnCredit bool `json:"earnCredit"`
+
+	// URL to the cover image for the published doc.
+	ImageLink *string `json:"imageLink,omitempty"`
+
+	// A time unit used as part of a duration value.
+	Mode DocPublishMode `json:"mode"`
+}
+
+// DocReference defines model for DocReference.
+type DocReference struct {
+
+	// Browser-friendly link to the Coda doc.
+	BrowserLink string `json:"browserLink"`
+
+	// API link to the Coda doc.
+	Href string `json:"href"`
+
+	// ID of the Coda doc.
+	Id string `json:"id"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// DocSize defines model for DocSize.
+type DocSize struct {
+
+	// If true, indicates that the doc is over the API size limit.
+	OverApiSizeLimit bool `json:"overApiSizeLimit"`
+
+	// The total number of page contained within the doc.
+	PageCount float32 `json:"pageCount"`
+
+	// The total number of tables and views contained within the doc.
+	TableAndViewCount float32 `json:"tableAndViewCount"`
+
+	// The number of rows contained within all tables of the doc.
+	TotalRowCount float32 `json:"totalRowCount"`
+}
+
+// DocumentMutateResponse defines model for DocumentMutateResponse.
+type DocumentMutateResponse struct {
+
+	// An arbitrary unique identifier for this request.
+	RequestId string `json:"requestId"`
+}
+
+// DomainPrincipal defines model for DomainPrincipal.
+type DomainPrincipal struct {
+
+	// Domain for the principal.
+	Domain string `json:"domain"`
+
+	// Type of principal.
+	Type PrincipalType `json:"type"`
+}
+
+// DurationColumnFormat defines model for DurationColumnFormat.
+type DurationColumnFormat struct {
+	// Embedded struct due to allOf(#/components/schemas/SimpleColumnFormat)
+	SimpleColumnFormat
+	// Embedded fields due to inline allOf schema
+	MaxUnit *struct {
+		// Embedded fields due to inline allOf schema
+		// Embedded struct due to allOf(#/components/schemas/DurationUnit)
+		DurationUnit
+	} `json:"maxUnit,omitempty"`
+	Precision *int `json:"precision,omitempty"`
+}
+
+// DurationUnit defines model for DurationUnit.
+type DurationUnit string
+
+// List of DurationUnit
+const (
+	DurationUnit_days    DurationUnit = "days"
+	DurationUnit_hours   DurationUnit = "hours"
+	DurationUnit_minutes DurationUnit = "minutes"
+	DurationUnit_seconds DurationUnit = "seconds"
+)
+
+// EmailPrincipal defines model for EmailPrincipal.
+type EmailPrincipal struct {
+
+	// Email for the principal.
+	Email string `json:"email"`
+
+	// Type of principal.
+	Type PrincipalType `json:"type"`
+}
+
+// Formula defines model for Formula.
+type Formula struct {
+
+	// API link to the formula.
+	Href string `json:"href"`
+
+	// ID of the formula.
+	Id string `json:"id"`
+
+	// Name of the formula.
+	Name string `json:"name"`
+
+	// Reference to a page.
+	Parent *PageReference `json:"parent,omitempty"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+
+	// A Coda result or entity expressed as a primitive type, or array of primitive types.
+	Value Value `json:"value"`
+}
+
+// FormulaDetail defines model for FormulaDetail.
+type FormulaDetail struct {
+
+	// Returns whether or not the given formula has a Now() formula within it.
+	HasNowFormula *bool `json:"hasNowFormula,omitempty"`
+
+	// Returns whether or not the given formula has a Today() formula within it.
+	HasTodayFormula *bool `json:"hasTodayFormula,omitempty"`
+
+	// Returns whether or not the given formula has a User() formula within it.
+	HasUserFormula *bool `json:"hasUserFormula,omitempty"`
+
+	// Returns whether or not the given formula can return different results in different contexts (for example, for different users).
+	IsVolatile *bool `json:"isVolatile,omitempty"`
+
+	// Returns whether or not the given formula is valid.
+	Valid bool `json:"valid"`
+}
+
+// FormulaList defines model for FormulaList.
+type FormulaList struct {
+
+	// API link to these results
+	Href         *string            `json:"href,omitempty"`
+	Items        []FormulaReference `json:"items"`
+	NextPageLink *struct {
+		// Embedded struct due to allOf(#/components/schemas/nextPageLink)
+		NextPageLink
+		// Embedded fields due to inline allOf schema
+	} `json:"nextPageLink,omitempty"`
+
+	// If specified, an opaque token used to fetch the next page of results.
+	NextPageToken *NextPageToken `json:"nextPageToken,omitempty"`
+}
+
+// FormulaReference defines model for FormulaReference.
+type FormulaReference struct {
+
+	// API link to the formula.
+	Href string `json:"href"`
+
+	// ID of the formula.
+	Id string `json:"id"`
+
+	// Name of the formula.
+	Name string `json:"name"`
+
+	// Reference to a page.
+	Parent *PageReference `json:"parent,omitempty"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// Icon defines model for Icon.
+type Icon struct {
+
+	// Browser-friendly link to an icon.
+	BrowserLink string `json:"browserLink"`
+
+	// Name of the icon.
+	Name string `json:"name"`
+
+	// MIME type of the icon
+	Type string `json:"type"`
+}
+
+// IconSet defines model for IconSet.
+type IconSet string
+
+// List of IconSet
+const (
+	IconSet_battery   IconSet = "battery"
+	IconSet_bell      IconSet = "bell"
+	IconSet_bug       IconSet = "bug"
+	IconSet_checkmark IconSet = "checkmark"
+	IconSet_chili     IconSet = "chili"
+	IconSet_circle    IconSet = "circle"
+	IconSet_cloud     IconSet = "cloud"
+	IconSet_cocktail  IconSet = "cocktail"
+	IconSet_coffee    IconSet = "coffee"
+	IconSet_currency  IconSet = "currency"
+	IconSet_diamond   IconSet = "diamond"
+	IconSet_fire      IconSet = "fire"
+	IconSet_heart     IconSet = "heart"
+	IconSet_lightbulb IconSet = "lightbulb"
+	IconSet_lightning IconSet = "lightning"
+	IconSet_person    IconSet = "person"
+	IconSet_smiley    IconSet = "smiley"
+	IconSet_star      IconSet = "star"
+	IconSet_sun       IconSet = "sun"
+	IconSet_thumbsup  IconSet = "thumbsup"
+)
+
+// Image defines model for Image.
+type Image struct {
+
+	// Browser-friendly link to an image.
+	BrowserLink string `json:"browserLink"`
+
+	// The height in pixels of the image.
+	Height *float32 `json:"height,omitempty"`
+
+	// MIME type of the image.
+	Type *string `json:"type,omitempty"`
+
+	// The width in pixels of the image.
+	Width *float32 `json:"width,omitempty"`
+}
+
+// ImageStatus defines model for ImageStatus.
+type ImageStatus string
+
+// List of ImageStatus
+const (
+	ImageStatus_deleted ImageStatus = "deleted"
+	ImageStatus_failed  ImageStatus = "failed"
+	ImageStatus_live    ImageStatus = "live"
+)
+
+// ImageUrlValue defines model for ImageUrlValue.
+type ImageUrlValue struct {
+	// Embedded struct due to allOf(#/components/schemas/LinkedDataObject)
+	LinkedDataObject
+	// Embedded fields due to inline allOf schema
+
+	// The height of the image in pixels.
+	Height *float32 `json:"height,omitempty"`
+
+	// The name of the image.
+	Name *string `json:"name,omitempty"`
+
+	// The status values that an image object can have.
+	Status *ImageStatus `json:"status,omitempty"`
+
+	// The url of the image.
+	Url *string `json:"url,omitempty"`
+
+	// The width of the image in pixels.
+	Width *float32 `json:"width,omitempty"`
+}
+
+// Layout defines model for Layout.
+type Layout string
+
+// List of Layout
+const (
+	Layout__default     Layout = "default"
+	Layout_areaChart    Layout = "areaChart"
+	Layout_barChart     Layout = "barChart"
+	Layout_bubbleChart  Layout = "bubbleChart"
+	Layout_calendar     Layout = "calendar"
+	Layout_card         Layout = "card"
+	Layout_ganttChart   Layout = "ganttChart"
+	Layout_lineChart    Layout = "lineChart"
+	Layout_masterDetail Layout = "masterDetail"
+	Layout_pieChart     Layout = "pieChart"
+	Layout_scatterChart Layout = "scatterChart"
+	Layout_slide        Layout = "slide"
+	Layout_wordCloud    Layout = "wordCloud"
+)
+
+// LinkedDataObject defines model for LinkedDataObject.
+type LinkedDataObject struct {
+
+	// A url describing the schema context for this object, typically "http://schema.org/".
+	Context string `json:"@context"`
+
+	// A schema.org identifier for the object.
+	Type LinkedDataType `json:"@type"`
+
+	// An identifier of additional type info specific to Coda that may not be present in a schema.org taxonomy,
+	AdditionalType *string `json:"additionalType,omitempty"`
+}
+
+// LinkedDataType defines model for LinkedDataType.
+type LinkedDataType string
+
+// List of LinkedDataType
+const (
+	LinkedDataType_ImageObject     LinkedDataType = "ImageObject"
+	LinkedDataType_MonetaryAmount  LinkedDataType = "MonetaryAmount"
+	LinkedDataType_Person          LinkedDataType = "Person"
+	LinkedDataType_StructuredValue LinkedDataType = "StructuredValue"
+	LinkedDataType_WebPage         LinkedDataType = "WebPage"
+)
+
+// MutationStatus defines model for MutationStatus.
+type MutationStatus struct {
+
+	// Returns whether the mutation has completed.
+	Completed bool `json:"completed"`
+}
+
+// NumberOrNumberFormula defines model for NumberOrNumberFormula.
+type NumberOrNumberFormula interface{}
+
+// NumericColumnFormat defines model for NumericColumnFormat.
+type NumericColumnFormat struct {
+	// Embedded struct due to allOf(#/components/schemas/SimpleColumnFormat)
+	SimpleColumnFormat
+	// Embedded fields due to inline allOf schema
+
+	// The decimal precision.
+	Precision *int `json:"precision,omitempty"`
+
+	// Whether to use a thousands separator (like ",") to format the numeric value.
+	UseThousandsSeparator *bool `json:"useThousandsSeparator,omitempty"`
+}
+
+// Page defines model for Page.
+type Page struct {
+
+	// Browser-friendly link to the page.
+	BrowserLink string          `json:"browserLink"`
+	Children    []PageReference `json:"children"`
+
+	// API link to the page.
+	Href string `json:"href"`
+
+	// Info about the icon.
+	Icon *Icon `json:"icon,omitempty"`
+
+	// ID of the page.
+	Id string `json:"id"`
+
+	// Info about the image.
+	Image *Image `json:"image,omitempty"`
+
+	// Name of the page.
+	Name string `json:"name"`
+
+	// Reference to a page.
+	Parent *PageReference `json:"parent,omitempty"`
+
+	// Subtitle of the page.
+	Subtitle *string `json:"subtitle,omitempty"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// PageList defines model for PageList.
+type PageList struct {
+
+	// API link to these results
+	Href         *string `json:"href,omitempty"`
+	Items        []Page  `json:"items"`
+	NextPageLink *struct {
+		// Embedded struct due to allOf(#/components/schemas/nextPageLink)
+		NextPageLink
+		// Embedded fields due to inline allOf schema
+	} `json:"nextPageLink,omitempty"`
+
+	// If specified, an opaque token used to fetch the next page of results.
+	NextPageToken *NextPageToken `json:"nextPageToken,omitempty"`
+}
+
+// PageReference defines model for PageReference.
+type PageReference struct {
+
+	// Browser-friendly link to the page.
+	BrowserLink string `json:"browserLink"`
+
+	// API link to the page.
+	Href string `json:"href"`
+
+	// ID of the page.
+	Id string `json:"id"`
+
+	// Name of the page.
+	Name string `json:"name"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// PageUpdate defines model for PageUpdate.
+type PageUpdate struct {
+
+	// Name of the icon.
+	IconName *string `json:"iconName,omitempty"`
+
+	// Url of the image to use.
+	ImageUrl *string `json:"imageUrl,omitempty"`
+
+	// Name of the page.
+	Name *string `json:"name,omitempty"`
+
+	// Subtitle of the page.
+	Subtitle *string `json:"subtitle,omitempty"`
+}
+
+// PageUpdateResult defines model for PageUpdateResult.
+type PageUpdateResult struct {
+	// Embedded struct due to allOf(#/components/schemas/DocumentMutateResponse)
+	DocumentMutateResponse
+	// Embedded fields due to inline allOf schema
+
+	// ID of the updated page.
+	Id string `json:"id"`
+}
+
+// Permission defines model for Permission.
+type Permission struct {
+
+	// Type of access.
+	Access AccessType `json:"access"`
+
+	// Id for the Permission
+	Id string `json:"id"`
+
+	// Metadata about a principal.
+	Principal Principal `json:"principal"`
+}
+
+// PersonValue defines model for PersonValue.
+type PersonValue struct {
+	// Embedded struct due to allOf(#/components/schemas/LinkedDataObject)
+	LinkedDataObject
+	// Embedded fields due to inline allOf schema
+
+	// The email address of the person.
+	Email string `json:"email"`
+
+	// The full name of the person.
+	Name string `json:"name"`
+}
+
+// Principal defines model for Principal.
+type Principal interface{}
+
+// PrincipalType defines model for PrincipalType.
+type PrincipalType string
+
+// List of PrincipalType
+const (
+	PrincipalType_anyone PrincipalType = "anyone"
+	PrincipalType_domain PrincipalType = "domain"
+	PrincipalType_email  PrincipalType = "email"
+)
+
+// PublishResult defines model for PublishResult.
+type PublishResult struct {
+	// Embedded struct due to allOf(#/components/schemas/DocumentMutateResponse)
+	DocumentMutateResponse
+	// Embedded fields due to inline allOf schema
+}
+
+// PushButtonResult defines model for PushButtonResult.
+type PushButtonResult struct {
+	// Embedded struct due to allOf(#/components/schemas/DocumentMutateResponse)
+	DocumentMutateResponse
+	// Embedded fields due to inline allOf schema
+
+	// ID of the column where the button exists.
+	ColumnId string `json:"columnId"`
+
+	// ID of the row where the button exists.
+	RowId string `json:"rowId"`
+}
+
+// ReferenceColumnFormat defines model for ReferenceColumnFormat.
+type ReferenceColumnFormat struct {
+	// Embedded struct due to allOf(#/components/schemas/SimpleColumnFormat)
+	SimpleColumnFormat
+	// Embedded fields due to inline allOf schema
+	Table struct {
+		// Embedded fields due to inline allOf schema
+		// Embedded struct due to allOf(#/components/schemas/TableReference)
+		TableReference
+	} `json:"table"`
+}
+
+// RichSingleValue defines model for RichSingleValue.
+type RichSingleValue interface{}
+
+// RichValue defines model for RichValue.
+type RichValue interface{}
+
+// Row defines model for Row.
+type Row struct {
+
+	// Browser-friendly link to the row.
+	BrowserLink string `json:"browserLink"`
+
+	// Timestamp for when the row was created.
+	CreatedAt time.Time `json:"createdAt"`
+
+	// API link to the row.
+	Href string `json:"href"`
+
+	// ID of the row.
+	Id string `json:"id"`
+
+	// Index of the row within the table.
+	Index int `json:"index"`
+
+	// The display name of the row, based on its identifying column.
+	Name string `json:"name"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+
+	// Timestamp for when the row was last modified.
+	UpdatedAt time.Time `json:"updatedAt"`
+
+	// Values for a specific row, represented as a hash of column IDs (or names with `useColumnNames`) to values.
+	Values map[string]interface{} `json:"values"`
+}
+
+// RowDeleteResult defines model for RowDeleteResult.
+type RowDeleteResult struct {
+	// Embedded struct due to allOf(#/components/schemas/DocumentMutateResponse)
+	DocumentMutateResponse
+	// Embedded fields due to inline allOf schema
+
+	// ID of the row to be deleted.
+	Id string `json:"id"`
+}
+
+// RowDetail defines model for RowDetail.
+type RowDetail struct {
+
+	// Browser-friendly link to the row.
+	BrowserLink string `json:"browserLink"`
+
+	// Timestamp for when the row was created.
+	CreatedAt time.Time `json:"createdAt"`
+
+	// API link to the row.
+	Href string `json:"href"`
+
+	// ID of the row.
+	Id string `json:"id"`
+
+	// Index of the row within the table.
+	Index int `json:"index"`
+
+	// The display name of the row, based on its identifying column.
+	Name string `json:"name"`
+
+	// Reference to a table or view.
+	Parent TableReference `json:"parent"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+
+	// Timestamp for when the row was last modified.
+	UpdatedAt time.Time `json:"updatedAt"`
+
+	// Values for a specific row, represented as a hash of column IDs (or names with `useColumnNames`) to values.
+	Values map[string]interface{} `json:"values"`
+}
+
+// RowEdit defines model for RowEdit.
+type RowEdit struct {
+	Cells []CellEdit `json:"cells"`
+}
+
+// RowList defines model for RowList.
+type RowList struct {
+
+	// API link to these results
+	Href         *string `json:"href,omitempty"`
+	Items        []Row   `json:"items"`
+	NextPageLink *struct {
+		// Embedded struct due to allOf(#/components/schemas/nextPageLink)
+		NextPageLink
+		// Embedded fields due to inline allOf schema
+	} `json:"nextPageLink,omitempty"`
+
+	// If specified, an opaque token used to fetch the next page of results.
+	NextPageToken *NextPageToken `json:"nextPageToken,omitempty"`
+}
+
+// RowUpdate defines model for RowUpdate.
+type RowUpdate struct {
+
+	// An edit made to a particular row.
+	Row RowEdit `json:"row"`
+}
+
+// RowUpdateResult defines model for RowUpdateResult.
+type RowUpdateResult struct {
+	// Embedded struct due to allOf(#/components/schemas/DocumentMutateResponse)
+	DocumentMutateResponse
+	// Embedded fields due to inline allOf schema
+
+	// ID of the updated row.
+	Id string `json:"id"`
+}
+
+// RowValue defines model for RowValue.
+type RowValue struct {
+	// Embedded struct due to allOf(#/components/schemas/LinkedDataObject)
+	LinkedDataObject
+	// Embedded fields due to inline allOf schema
+
+	// The type of this resource.
+	AdditionalType string `json:"additionalType"`
+
+	// The display name of the row, based on its identifying column.
+	Name string `json:"name"`
+
+	// The ID of the table
+	RowId string `json:"rowId"`
+
+	// The ID of the table
+	TableId string `json:"tableId"`
+
+	// The url of the table.
+	TableUrl string `json:"tableUrl"`
+
+	// The url of the row.
+	Url string `json:"url"`
+}
+
+// RowsDelete defines model for RowsDelete.
+type RowsDelete struct {
+
+	// Row IDs to delete.
+	RowIds []string `json:"rowIds"`
+}
+
+// RowsDeleteResult defines model for RowsDeleteResult.
+type RowsDeleteResult struct {
+	// Embedded struct due to allOf(#/components/schemas/DocumentMutateResponse)
+	DocumentMutateResponse
+	// Embedded fields due to inline allOf schema
+
+	// Row IDs to delete.
+	RowIds []string `json:"rowIds"`
+}
+
+// RowsSortBy defines model for RowsSortBy.
+type RowsSortBy string
+
+// List of RowsSortBy
+const (
+	RowsSortBy_createdAt RowsSortBy = "createdAt"
+	RowsSortBy_natural   RowsSortBy = "natural"
+)
+
+// RowsUpsert defines model for RowsUpsert.
+type RowsUpsert struct {
+
+	// Optional column IDs, URLs, or names (fragile and discouraged), specifying columns to be used as upsert keys.
+	KeyColumns *[]string `json:"keyColumns,omitempty"`
+	Rows       []RowEdit `json:"rows"`
+}
+
+// RowsUpsertResult defines model for RowsUpsertResult.
+type RowsUpsertResult struct {
+	// Embedded struct due to allOf(#/components/schemas/DocumentMutateResponse)
+	DocumentMutateResponse
+}
+
+// ScalarValue defines model for ScalarValue.
+type ScalarValue interface{}
+
+// ScaleColumnFormat defines model for ScaleColumnFormat.
+type ScaleColumnFormat struct {
+	// Embedded struct due to allOf(#/components/schemas/SimpleColumnFormat)
+	SimpleColumnFormat
+	// Embedded fields due to inline allOf schema
+	Icon struct {
+		// Embedded fields due to inline allOf schema
+		// Embedded struct due to allOf(#/components/schemas/IconSet)
+		IconSet
+	} `json:"icon"`
+
+	// The maximum number allowed for this scale.
+	Maximum float32 `json:"maximum"`
+}
+
+// SimpleColumnFormat defines model for SimpleColumnFormat.
+type SimpleColumnFormat struct {
+
+	// Whether or not this column is an array.
+	IsArray bool `json:"isArray"`
+
+	// Format type of the column
+	Type ColumnFormatType `json:"type"`
+}
+
+// SliderColumnFormat defines model for SliderColumnFormat.
+type SliderColumnFormat struct {
+	// Embedded struct due to allOf(#/components/schemas/SimpleColumnFormat)
+	SimpleColumnFormat
+	// Embedded fields due to inline allOf schema
+	Maximum *struct {
+		// Embedded fields due to inline allOf schema
+		// Embedded struct due to allOf(#/components/schemas/NumberOrNumberFormula)
+		NumberOrNumberFormula
+	} `json:"maximum,omitempty"`
+	Minimum *struct {
+		// Embedded fields due to inline allOf schema
+		// Embedded struct due to allOf(#/components/schemas/NumberOrNumberFormula)
+		NumberOrNumberFormula
+	} `json:"minimum,omitempty"`
+	Step *struct {
+		// Embedded fields due to inline allOf schema
+		// Embedded struct due to allOf(#/components/schemas/NumberOrNumberFormula)
+		NumberOrNumberFormula
+	} `json:"step,omitempty"`
+}
+
+// Sort defines model for Sort.
+type Sort struct {
+
+	// Reference to a column.
+	Column ColumnReference `json:"column"`
+
+	// Direction of a sort for a table or view.
+	Direction SortDirection `json:"direction"`
+}
+
+// SortBySchema defines model for SortBySchema.
+type SortBySchema string
+
+// List of SortBySchema
+const (
+	SortBySchema_name SortBySchema = "name"
+)
+
+// SortDirection defines model for SortDirection.
+type SortDirection string
+
+// List of SortDirection
+const (
+	SortDirection_ascending  SortDirection = "ascending"
+	SortDirection_descending SortDirection = "descending"
+)
+
+// Table defines model for Table.
+type Table struct {
+
+	// Browser-friendly link to the table.
+	BrowserLink string `json:"browserLink"`
+
+	// Timestamp for when the table was created.
+	CreatedAt time.Time `json:"createdAt"`
+
+	// Reference to a column.
+	DisplayColumn ColumnReference `json:"displayColumn"`
+	Filter        *struct {
+		// Embedded fields due to inline allOf schema
+		// Embedded struct due to allOf(#/components/schemas/FormulaDetail)
+		FormulaDetail
+	} `json:"filter,omitempty"`
+
+	// API link to the table.
+	Href string `json:"href"`
+
+	// ID of the table.
+	Id string `json:"id"`
+
+	// Layout type of the table or view.
+	Layout Layout `json:"layout"`
+
+	// Name of the table.
+	Name string `json:"name"`
+
+	// Reference to a page.
+	Parent PageReference `json:"parent"`
+
+	// Reference to a table or view.
+	ParentTable *TableReference `json:"parentTable,omitempty"`
+
+	// Total number of rows in the table.
+	RowCount int `json:"rowCount"`
+
+	// Any sorts applied to the table.
+	Sorts     []Sort    `json:"sorts"`
+	TableType TableType `json:"tableType"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+
+	// Timestamp for when the table was last modified.
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+// TableList defines model for TableList.
+type TableList struct {
+
+	// API link to these results
+	Href         *string          `json:"href,omitempty"`
+	Items        []TableReference `json:"items"`
+	NextPageLink *struct {
+		// Embedded struct due to allOf(#/components/schemas/nextPageLink)
+		NextPageLink
+		// Embedded fields due to inline allOf schema
+	} `json:"nextPageLink,omitempty"`
+
+	// If specified, an opaque token used to fetch the next page of results.
+	NextPageToken *NextPageToken `json:"nextPageToken,omitempty"`
+}
+
+// TableReference defines model for TableReference.
+type TableReference struct {
+
+	// Browser-friendly link to the table.
+	BrowserLink string `json:"browserLink"`
+
+	// API link to the table.
+	Href string `json:"href"`
+
+	// ID of the table.
+	Id string `json:"id"`
+
+	// Name of the table.
+	Name string `json:"name"`
+
+	// Reference to a page.
+	Parent    *PageReference `json:"parent,omitempty"`
+	TableType TableType      `json:"tableType"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// TableType defines model for TableType.
+type TableType string
+
+// List of TableType
+const (
+	TableType_table TableType = "table"
+	TableType_view  TableType = "view"
+)
+
+// TimeColumnFormat defines model for TimeColumnFormat.
+type TimeColumnFormat struct {
+	// Embedded struct due to allOf(#/components/schemas/SimpleColumnFormat)
+	SimpleColumnFormat
+	// Embedded fields due to inline allOf schema
+
+	// A format string using Moment syntax: https://momentjs.com/docs/#/displaying/
+	Format *string `json:"format,omitempty"`
+}
+
+// Type defines model for Type.
+type Type string
+
+// List of Type
+const (
+	Type_aclMetadata    Type = "aclMetadata"
+	Type_aclPermissions Type = "aclPermissions"
+	Type_apiLink        Type = "apiLink"
+	Type_column         Type = "column"
+	Type_control        Type = "control"
+	Type_doc            Type = "doc"
+	Type_docAnalytics   Type = "docAnalytics"
+	Type_formula        Type = "formula"
+	Type_mutationStatus Type = "mutationStatus"
+	Type_page           Type = "page"
+	Type_row            Type = "row"
+	Type_table          Type = "table"
+	Type_user           Type = "user"
+	Type_workspace      Type = "workspace"
+)
+
+// UnpublishResult defines model for UnpublishResult.
+type UnpublishResult map[string]interface{}
+
+// UrlValue defines model for UrlValue.
+type UrlValue struct {
+	// Embedded struct due to allOf(#/components/schemas/LinkedDataObject)
+	LinkedDataObject
+	// Embedded fields due to inline allOf schema
+
+	// The user-visible text of the hyperlink.
+	Name *string `json:"name,omitempty"`
+
+	// The url of the hyperlink.
+	Url string `json:"url"`
+}
+
+// User defines model for User.
+type User struct {
+
+	// API link to the user.
+	Href string `json:"href"`
+
+	// Email address of the user.
+	LoginId string `json:"loginId"`
+
+	// Name of the user.
+	Name string `json:"name"`
+
+	// Browser-friendly link to the user's avatar image.
+	PictureLink *string `json:"pictureLink,omitempty"`
+
+	// True if the token used to make this request has restricted/scoped access to the API.
+	Scoped bool `json:"scoped"`
+
+	// Returns the name of the token used for this request.
+	TokenName string `json:"tokenName"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+
+	// Reference to a Coda workspace.
+	Workspace WorkspaceReference `json:"workspace"`
+}
+
+// Value defines model for Value.
+type Value interface{}
+
+// ValueFormat defines model for ValueFormat.
+type ValueFormat string
+
+// List of ValueFormat
+const (
+	ValueFormat_rich             ValueFormat = "rich"
+	ValueFormat_simple           ValueFormat = "simple"
+	ValueFormat_simpleWithArrays ValueFormat = "simpleWithArrays"
+)
+
+// Workspace defines model for Workspace.
+type Workspace struct {
+
+	// Browser-friendly link to the Coda workspace.
+	BrowserLink string `json:"browserLink"`
+
+	// Description of the workspace.
+	Description *string `json:"description,omitempty"`
+
+	// ID of the Coda workspace.
+	Id string `json:"id"`
+
+	// Name of the workspace.
+	Name string `json:"name"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// WorkspaceReference defines model for WorkspaceReference.
+type WorkspaceReference struct {
+
+	// Browser-friendly link to the Coda workspace.
+	BrowserLink string `json:"browserLink"`
+
+	// ID of the Coda workspace.
+	Id string `json:"id"`
+
+	// The type of this resource.
+	Type string `json:"type"`
+}
+
+// NextPageLink defines model for nextPageLink.
+type NextPageLink string
+
+// NextPageToken defines model for nextPageToken.
+type NextPageToken string
+
+// ColumnIdOrName defines model for columnIdOrName.
+type ColumnIdOrName string
+
+// ControlIdOrName defines model for controlIdOrName.
+type ControlIdOrName string
+
+// DocId defines model for docId.
+type DocId string
+
+// FormulaIdOrName defines model for formulaIdOrName.
+type FormulaIdOrName string
+
+// Limit defines model for limit.
+type Limit int
+
+// PageIdOrName defines model for pageIdOrName.
+type PageIdOrName string
+
+// PageToken defines model for pageToken.
+type PageToken string
+
+// PermissionId defines model for permissionId.
+type PermissionId string
+
+// RequestId defines model for requestId.
+type RequestId string
+
+// RowIdOrName defines model for rowIdOrName.
+type RowIdOrName string
+
+// SortBy defines model for sortBy.
+type SortBy SortBySchema
+
+// TableIdOrName defines model for tableIdOrName.
+type TableIdOrName string
+
+// TableTypes defines model for tableTypes.
+type TableTypes []TableType
+
+// UseColumnNames defines model for useColumnNames.
+type UseColumnNames bool
+
+// ViewIdOrName defines model for viewIdOrName.
+type ViewIdOrName string
+
+// BadRequestError defines model for BadRequestError.
+type BadRequestError struct {
+
+	// Any additional context on the error, or the same as `statusMessage` otherwise.
+	Message string `json:"message"`
+
+	// HTTP status code of the error.
+	StatusCode float32 `json:"statusCode"`
+
+	// HTTP status message of the error.
+	StatusMessage string `json:"statusMessage"`
+}
+
+// ForbiddenError defines model for ForbiddenError.
+type ForbiddenError struct {
+
+	// Any additional context on the error, or the same as `statusMessage` otherwise.
+	Message string `json:"message"`
+
+	// HTTP status code of the error.
+	StatusCode float32 `json:"statusCode"`
+
+	// HTTP status message of the error.
+	StatusMessage string `json:"statusMessage"`
+}
+
+// GoneError defines model for GoneError.
+type GoneError struct {
+
+	// Any additional context on the error, or the same as `statusMessage` otherwise.
+	Message string `json:"message"`
+
+	// HTTP status code of the error.
+	StatusCode float32 `json:"statusCode"`
+
+	// HTTP status message of the error.
+	StatusMessage string `json:"statusMessage"`
+}
+
+// NotFoundError defines model for NotFoundError.
+type NotFoundError struct {
+
+	// Any additional context on the error, or the same as `statusMessage` otherwise.
+	Message string `json:"message"`
+
+	// HTTP status code of the error.
+	StatusCode float32 `json:"statusCode"`
+
+	// HTTP status message of the error.
+	StatusMessage string `json:"statusMessage"`
+}
+
+// TooManyRequestsError defines model for TooManyRequestsError.
+type TooManyRequestsError struct {
+
+	// Any additional context on the error, or the same as `statusMessage` otherwise.
+	Message string `json:"message"`
+
+	// HTTP status code of the error.
+	StatusCode float32 `json:"statusCode"`
+
+	// HTTP status message of the error.
+	StatusMessage string `json:"statusMessage"`
+}
+
+// UnauthorizedError defines model for UnauthorizedError.
+type UnauthorizedError struct {
+
+	// Any additional context on the error, or the same as `statusMessage` otherwise.
+	Message string `json:"message"`
+
+	// HTTP status code of the error.
+	StatusCode float32 `json:"statusCode"`
+
+	// HTTP status message of the error.
+	StatusMessage string `json:"statusMessage"`
+}
+
+// ListDocAnalyticsParams defines parameters for ListDocAnalytics.
+type ListDocAnalyticsParams struct {
+
+	// Show analytics only for published docs.
+	IsPublished *bool `json:"isPublished,omitempty"`
+
+	// Limit results to activity on or after this date.
+	SinceDate *openapi_types.Date `json:"sinceDate,omitempty"`
+
+	// Limit results to activity on or before this date.
+	UntilDate *openapi_types.Date `json:"untilDate,omitempty"`
+
+	// An opaque token used to fetch the next page of results.
+	PageToken *PageToken `json:"pageToken,omitempty"`
+}
+
+// ListDocsParams defines parameters for ListDocs.
+type ListDocsParams struct {
+
+	// Show only docs owned by the user.
+	IsOwner *bool `json:"isOwner,omitempty"`
+
+	// Search term used to filter down results.
+	Query *string `json:"query,omitempty"`
+
+	// Show only docs copied from the specified doc ID.
+	SourceDoc *string `json:"sourceDoc,omitempty"`
+
+	// If true, returns docs that are starred. If false, returns docs that are not starred.
+	IsStarred *bool `json:"isStarred,omitempty"`
+
+	// Show only docs visible within the gallery.
+	InGallery *bool `json:"inGallery,omitempty"`
+
+	// Show only docs belonging to the given workspace.
+	WorkspaceId *string `json:"workspaceId,omitempty"`
+
+	// Show only docs belonging to the given folder.
+	FolderId *string `json:"folderId,omitempty"`
+
+	// Maximum number of results to return in this query.
+	Limit *Limit `json:"limit,omitempty"`
+
+	// An opaque token used to fetch the next page of results.
+	PageToken *PageToken `json:"pageToken,omitempty"`
+}
+
+// CreateDocJSONBody defines parameters for CreateDoc.
+type CreateDocJSONBody DocCreate
+
+// GetAclPermissionsParams defines parameters for GetAclPermissions.
+type GetAclPermissionsParams struct {
+
+	// Maximum number of results to return in this query.
+	Limit *Limit `json:"limit,omitempty"`
+
+	// An opaque token used to fetch the next page of results.
+	PageToken *PageToken `json:"pageToken,omitempty"`
+}
+
+// ShareDocJSONBody defines parameters for ShareDoc.
+type ShareDocJSONBody AddPermission
+
+// ListControlsParams defines parameters for ListControls.
+type ListControlsParams struct {
+
+	// Maximum number of results to return in this query.
+	Limit *Limit `json:"limit,omitempty"`
+
+	// An opaque token used to fetch the next page of results.
+	PageToken *PageToken `json:"pageToken,omitempty"`
+
+	// Determines how to sort the given objects.
+	SortBy *SortBy `json:"sortBy,omitempty"`
+}
+
+// ListFormulasParams defines parameters for ListFormulas.
+type ListFormulasParams struct {
+
+	// Maximum number of results to return in this query.
+	Limit *Limit `json:"limit,omitempty"`
+
+	// An opaque token used to fetch the next page of results.
+	PageToken *PageToken `json:"pageToken,omitempty"`
+
+	// Determines how to sort the given objects.
+	SortBy *SortBy `json:"sortBy,omitempty"`
+}
+
+// ListPagesParams defines parameters for ListPages.
+type ListPagesParams struct {
+
+	// Maximum number of results to return in this query.
+	Limit *Limit `json:"limit,omitempty"`
+
+	// An opaque token used to fetch the next page of results.
+	PageToken *PageToken `json:"pageToken,omitempty"`
+}
+
+// UpdatePageJSONBody defines parameters for UpdatePage.
+type UpdatePageJSONBody PageUpdate
+
+// PublishDocJSONBody defines parameters for PublishDoc.
+type PublishDocJSONBody DocPublish
+
+// ListTablesParams defines parameters for ListTables.
+type ListTablesParams struct {
+
+	// Maximum number of results to return in this query.
+	Limit *Limit `json:"limit,omitempty"`
+
+	// An opaque token used to fetch the next page of results.
+	PageToken *PageToken `json:"pageToken,omitempty"`
+
+	// Determines how to sort the given objects.
+	SortBy *SortBy `json:"sortBy,omitempty"`
+
+	// Comma-separated list of table types to include in results. If omitted, includes both tables and views.
+	TableTypes *TableTypes `json:"tableTypes,omitempty"`
+}
+
+// ListColumnsParams defines parameters for ListColumns.
+type ListColumnsParams struct {
+
+	// Maximum number of results to return in this query.
+	Limit *Limit `json:"limit,omitempty"`
+
+	// An opaque token used to fetch the next page of results.
+	PageToken *PageToken `json:"pageToken,omitempty"`
+
+	// If true, returns only visible columns for the table.
+	VisibleOnly *bool `json:"visibleOnly,omitempty"`
+}
+
+// DeleteRowsJSONBody defines parameters for DeleteRows.
+type DeleteRowsJSONBody RowsDelete
+
+// ListRowsParams defines parameters for ListRows.
+type ListRowsParams struct {
+
+	// Query used to filter returned rows, specified as `<column_id_or_name>:<value>`. If you'd like to use a column name instead of an ID, you must quote it (e.g., `"My Column":123`). Also note that `value` is a JSON value; if you'd like to use a string, you must surround it in quotes (e.g., `"groceries"`).
+	Query *string `json:"query,omitempty"`
+
+	// Specifies the sort order of the rows returned. If left unspecified, rows are returned by creation time ascending. "Natural" sort ordering is the order that the rows appear in the table view in the application. This ordering is only meaningfully defined for rows that are visible (unfiltered). Because of this, using this sort order will imply visibleOnly=true, that is, to only return visible rows. If you pass sortBy=natural and visibleOnly=false explicitly, this will result in a Bad Request error as this condition cannot be satisfied.
+	SortBy *RowsSortBy `json:"sortBy,omitempty"`
+
+	// Use column names instead of column IDs in the returned output. This is generally discouraged as it is fragile. If columns are renamed, code using original names may throw errors.
+	UseColumnNames *UseColumnNames `json:"useColumnNames,omitempty"`
+
+	// The format that cell values are returned as.
+	ValueFormat *ValueFormat `json:"valueFormat,omitempty"`
+
+	// If true, returns only visible rows and columns for the table.
+	VisibleOnly *bool `json:"visibleOnly,omitempty"`
+
+	// Maximum number of results to return in this query.
+	Limit *Limit `json:"limit,omitempty"`
+
+	// An opaque token used to fetch the next page of results.
+	PageToken *PageToken `json:"pageToken,omitempty"`
+}
+
+// UpsertRowsJSONBody defines parameters for UpsertRows.
+type UpsertRowsJSONBody RowsUpsert
+
+// UpsertRowsParams defines parameters for UpsertRows.
+type UpsertRowsParams struct {
+
+	// If true, the API will not attempt to parse the data in any way.
+	DisableParsing *bool `json:"disableParsing,omitempty"`
+}
+
+// GetRowParams defines parameters for GetRow.
+type GetRowParams struct {
+
+	// Use column names instead of column IDs in the returned output. This is generally discouraged as it is fragile. If columns are renamed, code using original names may throw errors.
+	UseColumnNames *UseColumnNames `json:"useColumnNames,omitempty"`
+
+	// The format that cell values are returned as.
+	ValueFormat *ValueFormat `json:"valueFormat,omitempty"`
+}
+
+// UpdateRowJSONBody defines parameters for UpdateRow.
+type UpdateRowJSONBody RowUpdate
+
+// UpdateRowParams defines parameters for UpdateRow.
+type UpdateRowParams struct {
+
+	// If true, the API will not attempt to parse the data in any way.
+	DisableParsing *bool `json:"disableParsing,omitempty"`
+}
+
+// ResolveBrowserLinkParams defines parameters for ResolveBrowserLink.
+type ResolveBrowserLinkParams struct {
+
+	// The browser link to try to resolve.
+	Url string `json:"url"`
+
+	// By default, attempting to resolve the Coda URL of a deleted object will result in an error. If this flag is set, the next-available object, all the way up to the doc itself, will be resolved.
+	DegradeGracefully *bool `json:"degradeGracefully,omitempty"`
+}
+
+// CreateDocRequestBody defines body for CreateDoc for application/json ContentType.
+type CreateDocJSONRequestBody CreateDocJSONBody
+
+// ShareDocRequestBody defines body for ShareDoc for application/json ContentType.
+type ShareDocJSONRequestBody ShareDocJSONBody
+
+// UpdatePageRequestBody defines body for UpdatePage for application/json ContentType.
+type UpdatePageJSONRequestBody UpdatePageJSONBody
+
+// PublishDocRequestBody defines body for PublishDoc for application/json ContentType.
+type PublishDocJSONRequestBody PublishDocJSONBody
+
+// DeleteRowsRequestBody defines body for DeleteRows for application/json ContentType.
+type DeleteRowsJSONRequestBody DeleteRowsJSONBody
+
+// UpsertRowsRequestBody defines body for UpsertRows for application/json ContentType.
+type UpsertRowsJSONRequestBody UpsertRowsJSONBody
+
+// UpdateRowRequestBody defines body for UpdateRow for application/json ContentType.
+type UpdateRowJSONRequestBody UpdateRowJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
